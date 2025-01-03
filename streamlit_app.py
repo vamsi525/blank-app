@@ -40,20 +40,18 @@ if source_file and target_file:
             "Content-Type": "application/json"
         }
         data = {
-            "model": "GPT35",  # Specify the model
+            "model": "gpt-4o-2024-05-13",  # Specify the model
             "prompt": prompt,
             "max_tokens": 1500,  # Adjust based on your needs
             "temperature": 0.5
         }
     
         response = requests.post(api_url, headers=headers, json=data)
-    
-        # Handle API response
-        # Handle the response
+
         if response.status_code == 200:
-            result = response.json()
-            generated_text = result["choices"][0]["text"]
-            print("Generated XSLT:")
-            print(generated_text)
+            xslt_output = response.json().get("choices")[0].get("text", "").strip()
+            st.success("XSLT Generated Successfully!")
+            st.code(xslt_output, language="xml")
+            st.download_button("Download XSLT", xslt_output, file_name="mapping.xslt")
         else:
-            print(f"Error {response.status_code}: {response.text}")
+            st.error(f"Failed to generate XSLT: Status Code {response.status_code}, Error: {response.json() if response.headers.get('Content-Type') == 'application/json' else response.text}")
