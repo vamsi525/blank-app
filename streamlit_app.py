@@ -54,23 +54,23 @@ if source_file and target_file:
         #     "temperature": 0.5
         # }
        data = {
-          "messages":[
-        	{
-        		"role": "system",
-        		"content": "You are a Gen AI"
-        	},
-        	{
-        		"role": "user",
-        		"content": prompt
-        	}
-        ],
-          "temperature": 0.7,
-          "top_p": 0.95,
-          "frequency_penalty": 0,
-          "presence_penalty": 0,
-          "max_tokens": 800,
-          "stop": null
-        }
+                  "messages":[
+                	{
+                		"role": "system",
+                		"content": "You are a Gen AI"
+                	},
+                	{
+                		"role": "user",
+                		"content": prompt
+                	}
+                  ],
+                  "temperature": 0.7,
+                  "top_p": 0.95,
+                  "frequency_penalty": 0,
+                  "presence_penalty": 0,
+                  "max_tokens": 800,
+                  "stop": null
+            }
         response = requests.post(api_url, headers=headers, json=data)
 
         if response.status_code == 200:
