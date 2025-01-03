@@ -35,7 +35,8 @@ if source_file and target_file:
         # Call Azure OpenAI API
         api_url = "https://azeupotoaipoc.openai.azure.com/openai/deployments/gpt-4o-2024-05-13/chat/completions?api-version=2024-02-15-preview"  # Replace with your endpoint
         headers = {
-            "api-key": "f7ff57fb377745d6837df09affdbd970",  # Replace with your API key
+            "Authorization": f"Bearer f7ff57fb377745d6837df09affdbd970",
+            #"api-key": "f7ff57fb377745d6837df09affdbd970",  # Replace with your API key
             "Content-Type": "application/json"
         }
         data = {
@@ -55,5 +56,11 @@ if source_file and target_file:
             
             # Download option
             st.download_button("Download XSLT", xslt_output, file_name="mapping.xslt")
+        elif response.status_code == 401:
+            print("Authentication failed. Check your API key.")
+        elif response.status_code == 404:
+            print("Endpoint not found. Check your API URL.")
+        elif response.status_code == 400:
+            print("Bad request. Verify your payload format.")
         else:
-            st.error(f"Failed to generate XSLT: {response.json()}")
+            print(f"Unexpected error: {response.status_code} - {response.text}")
