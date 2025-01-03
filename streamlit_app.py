@@ -9,13 +9,13 @@ st.title("OIC Gen 3 XSLT Generator")
 source_file = st.file_uploader("Upload Source XML/JSON Schema", type=["xml", "json"])
 target_file = st.file_uploader("Upload Target XML/JSON Schema", type=["xml", "json"])
 
-# if source_file and target_file:
-#     # Display uploaded files
-#     st.text("Source Schema:")
-#     st.code(source_file.read().decode("utf-8"), language="xml")
+if source_file and target_file:
+    # Display uploaded files
+    st.text("Source Schema:")
+    st.code(source_file.read().decode("utf-8"), language="xml")
     
-#     st.text("Target Schema:")
-#     st.code(target_file.read().decode("utf-8"), language="xml")
+    st.text("Target Schema:")
+    st.code(target_file.read().decode("utf-8"), language="xml")
 
     # Button to trigger mapping generation
     if st.button("Generate XSLT"):
