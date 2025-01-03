@@ -21,6 +21,7 @@ if source_file and target_file:
     if st.button("Generate XSLT"):
        # Read files as strings
         source_file.seek(0) 
+        target_file.seek(0) 
         source_schema = source_file.read().decode("utf-8")
         target_schema = target_file.read().decode("utf-8")
 
