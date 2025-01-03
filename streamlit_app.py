@@ -33,13 +33,13 @@ if source_file and target_file:
         """
     
         # Call Azure OpenAI API
-        api_url = "https://<azure-openai-endpoint>/v1/completions"  # Replace with your endpoint
+        api_url = "https://azeupotoaipoc.openai.azure.com/openai/deployments/gpt-4o-2024-05-13/chat/completions?api-version=2024-02-15-preview"  # Replace with your endpoint
         headers = {
-            "Authorization": f"Bearer <api-key>",  # Replace with your API key
+            "api-key": "f7ff57fb377745d6837df09affdbd970",  # Replace with your API key
             "Content-Type": "application/json"
         }
         data = {
-            "model": "text-davinci-003",  # Specify the model
+            "model": "GPT35",  # Specify the model
             "prompt": prompt,
             "max_tokens": 1500,  # Adjust based on your needs
             "temperature": 0.5
