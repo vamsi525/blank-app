@@ -32,36 +32,19 @@ if source_file and target_file:
         st.code(target_schema, language="xml")
     
         # Construct the prompt
-        # prompt = f"""
-        # Generate an XSLT that maps the following source schema to the target schema:
-        # - Source Schema: {source_schema}
-        # - Target Schema: {target_schema}
+        prompt = f"""
+        Generate an XSLT that maps the following source schema to the target schema:
+        - Source Schema: {source_schema}
+        - Target Schema: {target_schema}
     
-        # Ensure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards.
-        # """
-    prompt = {
-  "messages":[
-	{
-		"role": "system",
-		"content": "You are a Data Science Tutor"
-	},
-	{
-		"role": "user",
-		"content": "Explain AI Model to a 4th grader"
-	}
-],
-  "temperature": 0.7,
-  "top_p": 0.95,
-  "frequency_penalty": 0,
-  "presence_penalty": 0,
-  "max_tokens": 800,
-  "stop": null
-}
+        Ensure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards.
+        """
+    
         # Call Azure OpenAI API
-        api_url = "https://azeupotoaipoc.openai.azure.com/openai/deployments/gpt-4o-2024-05-13/chat/completions?api-version=2024-02-15-preview"  # Replace with your endpoint
+        api_url = ""  # Replace with your endpoint
         headers = {
             
-            "api-key": "f7ff57fb377745d6837df09affdbd970",  # Replace with your API key
+            "api-key": "",  # Replace with your API key
             "Content-Type": "application/json"
         }
         data = {
