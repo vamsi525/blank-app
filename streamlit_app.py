@@ -47,13 +47,30 @@ if source_file and target_file:
             "api-key": "f7ff57fb377745d6837df09affdbd970",  # Replace with your API key
             "Content-Type": "application/json"
         }
-        data = {
-            "model": "gpt-4o-2024-05-13",  # Specify the model
-            "prompt": prompt,
-            "max_tokens": 1500,  # Adjust based on your needs
-            "temperature": 0.5
+        # data = {
+        #     "model": "gpt-4o-2024-05-13",  # Specify the model
+        #     "prompt": prompt,
+        #     "max_tokens": 1500,  # Adjust based on your needs
+        #     "temperature": 0.5
+        # }
+       data = {
+          "messages":[
+        	{
+        		"role": "system",
+        		"content": "You are a Gen AI"
+        	},
+        	{
+        		"role": "user",
+        		"content": prompt
+        	}
+        ],
+          "temperature": 0.7,
+          "top_p": 0.95,
+          "frequency_penalty": 0,
+          "presence_penalty": 0,
+          "max_tokens": 800,
+          "stop": null
         }
-        st.code(data, language="json")
         response = requests.post(api_url, headers=headers, json=data)
 
         if response.status_code == 200:
