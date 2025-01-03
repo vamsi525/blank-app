@@ -23,11 +23,17 @@ if source_file and target_file:
         source_schema = source_file.read().decode("utf-8")
         target_schema = target_file.read().decode("utf-8")
 
+        # Debugging: Print the schemas to verify correctness
+        st.text("Source Schema Preview:")
+        st.code(source_schema[:500], language="xml")  # Display first 500 characters
+        st.text("Target Schema Preview:")
+        st.code(target_schema[:500], language="xml")
+
         # Construct the prompt
         prompt = f"""
         Generate an XSLT that maps the following source schema to the target schema:
-        - Source Schema: {source_schema}
-        - Target Schema: {target_schema}
+        Source Schema: {source_schema}
+        Target Schema: {target_schema}
     
         Ensure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards.
         """
