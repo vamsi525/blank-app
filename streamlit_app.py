@@ -22,6 +22,12 @@ if source_file and target_file:
        # Read files as strings
         source_schema = source_file.read().decode("utf-8")
         target_schema = target_file.read().decode("utf-8")
+
+        # Debugging: Print the schemas to verify correctness
+        st.text("Source Schema Preview:")
+        st.code(source_schema, language="xml")  # Display first 500 characters
+        st.text("Target Schema Preview:")
+        st.code(target_schema, language="xml")
     
         # Construct the prompt
         prompt = f"""
