@@ -49,12 +49,11 @@ if source_file and target_file:
         response = requests.post(api_url, headers=headers, json=data)
     
         # Handle API response
+        # Handle the response
         if response.status_code == 200:
-            xslt_output = response.json().get("choices")[0].get("text", "").strip()
-            st.success("XSLT Generated Successfully!")
-            st.code(xslt_output, language="xml")
-            
-            # Download option
-            st.download_button("Download XSLT", xslt_output, file_name="mapping.xslt")
+            result = response.json()
+            generated_text = result["choices"][0]["text"]
+            print("Generated XSLT:")
+            print(generated_text)
         else:
-            print(f"Unexpected error: {response.status_code} - {response.text}")
+            print(f"Error {response.status_code}: {response.text}")
