@@ -53,7 +53,7 @@ if source_file and target_file:
             "max_tokens": 1500,  # Adjust based on your needs
             "temperature": 0.5
         }
-    
+        st.code(data, language="json")
         response = requests.post(api_url, headers=headers, json=data)
 
         if response.status_code == 200:
