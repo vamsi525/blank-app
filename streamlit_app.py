@@ -56,4 +56,10 @@ if source_file and target_file:
             # Download option
             st.download_button("Download XSLT", xslt_output, file_name="mapping.xslt")
         else:
-            st.error(f"Failed to generate XSLT: {response.json()}")
+            if response.headers.get("Content-Type") == "application/json":
+                error_message = response.json()
+            else:
+                error_message = response.text
+
+            st.error(f"Failed to generate XSLT: Status Code {response.status_code}, Error: {error_message}")
+
