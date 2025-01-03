@@ -56,11 +56,5 @@ if source_file and target_file:
             
             # Download option
             st.download_button("Download XSLT", xslt_output, file_name="mapping.xslt")
-        elif response.status_code == 401:
-            print("Authentication failed. Check your API key.")
-        elif response.status_code == 404:
-            print("Endpoint not found. Check your API URL.")
-        elif response.status_code == 400:
-            print("Bad request. Verify your payload format.")
         else:
             print(f"Unexpected error: {response.status_code} - {response.text}")
