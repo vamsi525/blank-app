@@ -21,7 +21,7 @@ if source_file and target_file:
     if st.button("Generate XSLT"):
         # Call to Azure OpenAI API for XSLT generation
         response = requests.post(
-            "https://azeupotoaipoc.openai.azure.com/generate-xslt",
+            "https://azeupotoaipoc.openai.azure.com/openai/deployments/gpt-4o-2024-05-13/chat/completions?api-version=2024-02-15-preview",
             headers={"Authorization": "Bearer f7ff57fb377745d6837df09affdbd970"},
             json={"source_schema": source_file, "target_schema": target_file}
         )
