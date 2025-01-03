@@ -41,7 +41,7 @@ if source_file and target_file:
         # Call Azure OpenAI API
         api_url = "https://azeupotoaipoc.openai.azure.com/openai/deployments/gpt-4o-2024-05-13/chat/completions?api-version=2024-02-15-preview"  # Replace with your endpoint
         headers = {
-            "Authorization": f"Bearer f7ff57fb377745d6837df09affdbd97",  # Replace with your API key
+            "Authorization": "Bearer f7ff57fb377745d6837df09affdbd97",  # Replace with your API key
             "Content-Type": "application/json"
         }
         data = {
