@@ -59,8 +59,8 @@ st.title("OIC Gen3 XSLT Generator")
 st.write("Upload source and target schema files (JSON or Excel) to generate XSLT mappings.")
 
 # File Upload Section
-source_file = st.file_uploader("Upload Source Schema", type=["json", "xlsx"])
-target_file = st.file_uploader("Upload Target Schema", type=["json", "xlsx"])
+source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
+target_file = st.file_uploader("Upload Target Schema", type=["json", "xml"])
 
 if source_file and target_file:
     # Process uploaded files
