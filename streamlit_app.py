@@ -1,9 +1,8 @@
 import os
-import base64
+import json
+import xml.etree.ElementTree as ET
 import streamlit as st
 from openai import AzureOpenAI
-import json
-import pandas as pd
 
 # Azure OpenAI Configuration
 endpoint = os.getenv("ENDPOINT_URL", "https://azeupotoaipoc.openai.azure.com/")
@@ -18,14 +17,40 @@ client = AzureOpenAI(
 )
 
 # Helper functions
-def process_file(uploaded_file):
-    """Process uploaded file and return its content as a dictionary."""
-    if uploaded_file.name.endswith('.json'):
-        return json.load(uploaded_file)
-    elif uploaded_file.name.endswith('.xlsx'):
-        return pd.read_excel(uploaded_file).to_dict(orient='records')
+def parse_json(file):
+    """Parse JSON content."""
+    try:
+        return json.load(file)
+    except json.JSONDecodeError:
+        st.error("Failed to parse JSON file.")
+        return None
+
+def parse_xml(file):
+    """Parse XML content into a dictionary."""
+    try:
+        tree = ET.parse(file)
+        root = tree.getroot()
+        return xml_to_dict(root)
+    except ET.ParseError:
+        st.error("Failed to parse XML file.")
+        return None
+
+def xml_to_dict(element):
+    """Convert an XML element into a dictionary."""
+    return {
+        element.tag: (
+            element.text if len(element) == 0 else {child.tag: xml_to_dict(child) for child in element}
+        )
+    }
+
+def process_file(file):
+    """Identify file type and process accordingly."""
+    if file.name.endswith(".json"):
+        return parse_json(file)
+    elif file.name.endswith(".xml"):
+        return parse_xml(file)
     else:
-        st.error("Unsupported file format. Please upload a JSON or Excel file.")
+        st.error("Unsupported file format. Please upload JSON or XML files.")
         return None
 
 def generate_xslt(client, source_schema, target_schema):
@@ -44,7 +69,7 @@ def generate_xslt(client, source_schema, target_schema):
     response = client.chat.completions.create(
         model=deployment,
         messages=chat_prompt,
-        max_tokens=800,
+        max_tokens=1000,
         temperature=0.7,
         top_p=0.95,
         frequency_penalty=0,
@@ -56,7 +81,7 @@ def generate_xslt(client, source_schema, target_schema):
 
 # Streamlit App
 st.title("OIC Gen3 XSLT Generator")
-st.write("Upload source and target schema files (JSON or Excel) to generate XSLT mappings.")
+st.write("Upload source and target schema files (JSON, XML, or a combination) to generate XSLT mappings.")
 
 # File Upload Section
 source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
@@ -78,4 +103,3 @@ if source_file and target_file:
                     st.error(f"An error occurred: {e}")
 else:
     st.warning("Please upload both source and target schema files.")
-
