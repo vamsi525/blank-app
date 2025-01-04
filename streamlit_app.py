@@ -64,7 +64,7 @@ if source_file and target_file:
         openai.api_key = "f7ff57fb377745d6837df09affdbd970"
 
         response = openai.Completion.create(
-            engine=model_engine,
+            engine="gpt-4o-2024-05-13",
             prompt=prompt,
             max_tokens=1024,
             n=1,
