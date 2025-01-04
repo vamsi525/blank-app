@@ -1,6 +1,9 @@
 import streamlit as st
 import requests
 import json
+import openai
+
+
 
 # Streamlit UI
 st.title("OIC Gen 3 XSLT Generator")
@@ -40,21 +43,35 @@ if source_file and target_file:
         Ensure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards.
         """
     
-        # Call Azure OpenAI API
-        api_url = ""  # Replace with your endpoint
-        headers = {
+        # # Call Azure OpenAI API
+        # api_url = ""  # Replace with your endpoint
+        # headers = {
             
-            "api-key": "",  # Replace with your API key
-            "Content-Type": "application/json"
-        }
-        data = {
-            "model": "gpt-4o-2024-05-13",  # Specify the model
-            "prompt": prompt,
-            "max_tokens": 1500,  # Adjust based on your needs
-            "temperature": 0.5
-        }
+        #     "api-key": "",  # Replace with your API key
+        #     "Content-Type": "application/json"
+        # }
+        # data = {
+        #     "model": "gpt-4o-2024-05-13",  # Specify the model
+        #     "prompt": prompt,
+        #     "max_tokens": 1500,  # Adjust based on your needs
+        #     "temperature": 0.5
+        # }
      
-        response = requests.post(api_url, headers=headers, json=data)
+        # response = requests.post(api_url, headers=headers, json=data)
+
+        openai.api_type = "azure"
+openai.api_base = "https://azeupotoaipoc.openai.azure.com/"
+openai.api_version = "2024-05-01-preview"
+openai.api_key = "f7ff57fb377745d6837df09affdbd970"
+        
+         response = openai.Completion.create(
+        engine=model_engine,
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
 
         if response.status_code == 200:
             xslt_output = response.json().get("choices")[0].get("text", "").strip()
