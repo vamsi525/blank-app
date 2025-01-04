@@ -12,7 +12,7 @@ st.title("Azure OpenAI Integration")
 prompt = st.text_input("Enter your prompt:")
 if st.button("Generate"):
     if prompt:
-        response = openai.Completion.create(
+        response = openai.completions.create(
             engine="gpt-4o-2024-05-13",  # Replace with your Azure deployment name
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
