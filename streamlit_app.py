@@ -17,9 +17,9 @@ with st.sidebar.expander("Environment Variables"):
 # Set up the Open AI Client
 
 openai.api_type = "azure"
-openai.api_base = ENV["AZURE_OPENAI_ENDPOINT"]
-openai.api_version = ENV["AZURE_OPENAI_API_VERSION"]
-openai.api_key = ENV["AZURE_OPENAI_KEY"]
+openai.api_base = "https://azeupotoaipoc.openai.azure.com/"
+openai.api_version = "2024-05-01-preview"
+openai.api_key = "f7ff57fb377745d6837df09affdbd970"
 # endregion
 
 # region PROMPT SETUP
@@ -91,7 +91,7 @@ def generate_response(prompt):
     st.session_state["messages"].append({"role": "user", "content": prompt})
     try:
         completion = openai.ChatCompletion.create(
-            engine=ENV["AZURE_OPENAI_CHATGPT_DEPLOYMENT"],
+            engine="gpt-4o-2024-05-13",
             messages=st.session_state["messages"],
         )
         response = completion.choices[0].message.content
