@@ -110,6 +110,14 @@ if source_file and target_file:
                     xslt_code = generate_xslt(client, source_schema, target_schema)
                     st.success("XSLT generated successfully!")
                     st.code(xslt_code, language="xml")
+
+                    # Create a download button for the XSLT code
+                    st.download_button(
+                        label="Download XSLT",
+                        data=xslt_code,
+                        file_name="generated.xslt",
+                        mime="application/xml"
+                    )
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
 else:
