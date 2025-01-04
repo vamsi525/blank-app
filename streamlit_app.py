@@ -9,15 +9,15 @@ from dotenv import load_dotenv
 load_dotenv("./example.env")
 
 # Azure OpenAI Configuration
-endpoint =  os.getenv("AZURE_OPENAI_ENDPOINT") #os.getenv("ENDPOINT_URL", "https://azeupotoaipoc.openai.azure.com/")
-deployment = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") #os.getenv("DEPLOYMENT_NAME", "gpt-4")
-subscription_key = os.getenv("AZURE_OPENAI_KEY") #os.getenv("AZURE_OPENAI_API_KEY", "f7ff57fb377745d6837df09affdbd970")
+endpoint =  os.getenv("AZURE_OPENAI_ENDPOINT")
+deployment = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
+subscription_key = os.getenv("AZURE_OPENAI_KEY")
 
 # Initialize Azure OpenAI client
 client = AzureOpenAI(
     azure_endpoint=endpoint,
     api_key=subscription_key,
-    api_version=os.getenv("AZURE_OPENAI_API_VERSION") #"2024-05-01-preview",
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION") 
 )
 
 # Helper functions
