@@ -1,152 +1,81 @@
-import streamlit as st
-from streamlit_chat import message
-import dotenv
 import os
-import openai
-import datetime
+import base64
+import streamlit as st
+from openai import AzureOpenAI
 import json
+import pandas as pd
 
+# Azure OpenAI Configuration
+endpoint = os.getenv("ENDPOINT_URL", "https://azeupotoaipoc.openai.azure.com/")
+deployment = os.getenv("DEPLOYMENT_NAME", "gpt-4")
+subscription_key = os.getenv("AZURE_OPENAI_API_KEY", "f7ff57fb377745d6837df09affdbd970")
 
-# region ENV + SDK SETUP
-
-# Load environment variables
-ENV = dotenv.dotenv_values(".env")
-with st.sidebar.expander("Environment Variables"):
-    st.write(ENV)
-
-# Set up the Open AI Client
-
-openai.api_type = "azure"
-openai.api_base = "https://azeupotoaipoc.openai.azure.com/"
-openai.api_version = "2024-05-01-preview"
-openai.api_key = "f7ff57fb377745d6837df09affdbd970"
-# endregion
-
-# region PROMPT SETUP
-
-default_prompt = """
-You are an AI assistant  that helps users write concise\
- reports on sources provided according to a user query.\
- You will provide reasoning for your summaries and deductions by\
- describing your thought process. You will highlight any conflicting\
- information between or within sources. Greet the user by asking\
- what they'd like to investigate.
-"""
-
-system_prompt = st.sidebar.text_area("System Prompt", default_prompt, height=200)
-seed_message = {"role": "system", "content": system_prompt}
-# endregion
-
-# region SESSION MANAGEMENT
-# Initialise session state variables
-if "generated" not in st.session_state:
-    st.session_state["generated"] = []
-if "past" not in st.session_state:
-    st.session_state["past"] = []
-if "messages" not in st.session_state:
-    st.session_state["messages"] = [seed_message]
-if "model_name" not in st.session_state:
-    st.session_state["model_name"] = []
-if "cost" not in st.session_state:
-    st.session_state["cost"] = []
-if "total_tokens" not in st.session_state:
-    st.session_state["total_tokens"] = []
-if "total_cost" not in st.session_state:
-    st.session_state["total_cost"] = 0.0
-# endregion
-
-# region SIDEBAR SETUP
-
-counter_placeholder = st.sidebar.empty()
-counter_placeholder.write(
-    f"Total cost of this conversation: ${st.session_state['total_cost']:.5f}"
+# Initialize Azure OpenAI client
+client = AzureOpenAI(
+    azure_endpoint=endpoint,
+    api_key=subscription_key,
+    api_version="2024-05-01-preview",
 )
-clear_button = st.sidebar.button("Clear Conversation", key="clear")
 
-if clear_button:
-    st.session_state["generated"] = []
-    st.session_state["past"] = []
-    st.session_state["messages"] = [seed_message]
-    st.session_state["number_tokens"] = []
-    st.session_state["model_name"] = []
-    st.session_state["cost"] = []
-    st.session_state["total_cost"] = 0.0
-    st.session_state["total_tokens"] = []
-    counter_placeholder.write(
-        f"Total cost of this conversation: £{st.session_state['total_cost']:.5f}"
+# Helper functions
+def process_file(uploaded_file):
+    """Process uploaded file and return its content as a dictionary."""
+    if uploaded_file.name.endswith('.json'):
+        return json.load(uploaded_file)
+    elif uploaded_file.name.endswith('.xlsx'):
+        return pd.read_excel(uploaded_file).to_dict(orient='records')
+    else:
+        st.error("Unsupported file format. Please upload a JSON or Excel file.")
+        return None
+
+def generate_xslt(client, source_schema, target_schema):
+    """Generate XSLT code using OpenAI Azure Chat API."""
+    chat_prompt = [
+        {
+            "role": "system",
+            "content": "You are an AI assistant that generates XSLT mappings between source and target schemas for OIC Gen3 integrations."
+        },
+        {
+            "role": "user",
+            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
+        }
+    ]
+
+    response = client.chat.completions.create(
+        model=deployment,
+        messages=chat_prompt,
+        max_tokens=800,
+        temperature=0.7,
+        top_p=0.95,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop=None,
+        stream=False,
     )
+    return response['choices'][0]['message']['content']
 
+# Streamlit App
+st.title("OIC Gen3 XSLT Generator")
+st.write("Upload source and target schema files (JSON or Excel) to generate XSLT mappings.")
 
-download_conversation_button = st.sidebar.download_button(
-    "Download Conversation",
-    data=json.dumps(st.session_state["messages"]),
-    file_name=f"conversation.json",
-    mime="text/json",
-)
+# File Upload Section
+source_file = st.file_uploader("Upload Source Schema", type=["json", "xlsx"])
+target_file = st.file_uploader("Upload Target Schema", type=["json", "xlsx"])
 
-# endregion
+if source_file and target_file:
+    # Process uploaded files
+    source_schema = process_file(source_file)
+    target_schema = process_file(target_file)
 
+    if source_schema and target_schema:
+        if st.button("Generate XSLT"):
+            with st.spinner("Generating XSLT..."):
+                try:
+                    xslt_code = generate_xslt(client, source_schema, target_schema)
+                    st.success("XSLT generated successfully!")
+                    st.code(xslt_code, language="xml")
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
+else:
+    st.warning("Please upload both source and target schema files.")
 
-def generate_response(prompt):
-    st.session_state["messages"].append({"role": "user", "content": prompt})
-    try:
-        completion = openai.ChatCompletion.create(
-            engine="gpt-4o-2024-05-13",
-            messages=st.session_state["messages"],
-        )
-        response = completion.choices[0].message.content
-    except openai.error.APIError as e:
-        st.write(response)
-        response = f"The API could not handle this content: {str(e)}"
-    st.session_state["messages"].append({"role": "assistant", "content": response})
-
-    # print(st.session_state['messages'])
-    total_tokens = completion.usage.total_tokens
-    prompt_tokens = completion.usage.prompt_tokens
-    completion_tokens = completion.usage.completion_tokens
-    return response, total_tokens, prompt_tokens, completion_tokens
-
-
-st.title("Streamlit ChatGPT Demo")
-
-# container for chat history
-response_container = st.container()
-# container for text box
-container = st.container()
-
-with container:
-    with st.form(key="my_form", clear_on_submit=True):
-        user_input = st.text_area("You:", key="input", height=100)
-        submit_button = st.form_submit_button(label="Send")
-
-    if submit_button and user_input:
-        output, total_tokens, prompt_tokens, completion_tokens = generate_response(
-            user_input
-        )
-        st.session_state["past"].append(user_input)
-        st.session_state["generated"].append(output)
-        st.session_state["model_name"].append(ENV["AZURE_OPENAI_CHATGPT_DEPLOYMENT"])
-        st.session_state["total_tokens"].append(total_tokens)
-
-        # from https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/#pricing
-        cost = total_tokens * 0.001625 / 1000
-
-        st.session_state["cost"].append(cost)
-        st.session_state["total_cost"] += cost
-
-
-if st.session_state["generated"]:
-    with response_container:
-        for i in range(len(st.session_state["generated"])):
-            message(
-                st.session_state["past"][i],
-                is_user=True,
-                key=str(i) + "_user",
-                avatar_style="shapes",
-            )
-            message(
-                st.session_state["generated"][i], key=str(i), avatar_style="identicon"
-            )
-        counter_placeholder.write(
-            f"Total cost of this conversation: ${st.session_state['total_cost']:.5f}"
-        )
