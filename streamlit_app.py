@@ -3,21 +3,21 @@ import json
 import xml.etree.ElementTree as ET
 import streamlit as st
 from openai import AzureOpenAI
-from dotenv import load_dotenv
+import dotenv
 
-# Load environment variables from the .env file
-load_dotenv()
+# Load environment variables
+ENV = dotenv.dotenv_values(".env")
 
 # Azure OpenAI Configuration
-endpoint =  os.getenv("AZURE_OPENAI_ENDPOINT") #os.getenv("ENDPOINT_URL", "https://azeupotoaipoc.openai.azure.com/")
-deployment = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") #os.getenv("DEPLOYMENT_NAME", "gpt-4")
-subscription_key = os.getenv("AZURE_OPENAI_KEY") #os.getenv("AZURE_OPENAI_API_KEY", "f7ff57fb377745d6837df09affdbd970")
+endpoint =  ENV["AZURE_OPENAI_ENDPOINT"] #os.getenv("ENDPOINT_URL", "https://azeupotoaipoc.openai.azure.com/")
+deployment = ENV["AZURE_OPENAI_CHATGPT_DEPLOYMENT"] #os.getenv("DEPLOYMENT_NAME", "gpt-4")
+subscription_key = ENV["AZURE_OPENAI_KEY"] #os.getenv("AZURE_OPENAI_API_KEY", "f7ff57fb377745d6837df09affdbd970")
 
 # Initialize Azure OpenAI client
 client = AzureOpenAI(
     azure_endpoint=endpoint,
     api_key=subscription_key,
-    api_version=os.getenv("AZURE_OPENAI_API_VERSION") #"2024-05-01-preview",
+    api_version=ENV["AZURE_OPENAI_API_VERSION"] #"2024-05-01-preview",
 )
 
 # Helper functions
