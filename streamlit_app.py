@@ -84,9 +84,19 @@ def generate_xslt(client, source_schema, target_schema):
 st.title("OIC Gen3 XSLT Generator")
 st.write("Upload source and target schema files (JSON, XML, or a combination) to generate XSLT mappings.")
 
-# File Upload Section
-source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
-target_file = st.file_uploader("Upload Target Schema", type=["json", "xml"])
+# Create columns for side-by-side upload buttons
+col1, col2 = st.columns(2)
+
+# File upload section with side-by-side buttons
+with col1:
+    source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
+
+with col2:
+    target_file = st.file_uploader("Upload Target Schema", type=["json", "xml"])
+
+# # File Upload Section
+# source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
+# target_file = st.file_uploader("Upload Target Schema", type=["json", "xml"])
 
 if source_file and target_file:
     # Process uploaded files
