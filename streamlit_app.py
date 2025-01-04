@@ -60,18 +60,18 @@ if source_file and target_file:
         # response = requests.post(api_url, headers=headers, json=data)
 
         openai.api_type = "azure"
-openai.api_base = "https://azeupotoaipoc.openai.azure.com/"
-openai.api_version = "2024-05-01-preview"
-openai.api_key = "f7ff57fb377745d6837df09affdbd970"
+        openai.api_base = "https://azeupotoaipoc.openai.azure.com/"
+        openai.api_version = "2024-05-01-preview"
+        openai.api_key = "f7ff57fb377745d6837df09affdbd970"
         
          response = openai.Completion.create(
-        engine=model_engine,
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.7,
-    )
+            engine=model_engine,
+            prompt=prompt,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
 
         if response.status_code == 200:
             xslt_output = response.json().get("choices")[0].get("text", "").strip()
