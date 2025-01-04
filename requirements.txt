@@ -1,9 +1,4 @@
 streamlit
-streamlit-chat
 openai
-langchain
-python-dotenv
 AzureOpenAI
-base64
 json
-pandas
