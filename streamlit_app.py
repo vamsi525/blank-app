@@ -78,7 +78,7 @@ def generate_xslt(client, source_schema, target_schema):
         stream=False,
     )
     #return response['choices'][0]['message']['content']
-    return response.choices[0].message['content']
+    return response.choices[0].message.content
 
 # Streamlit App
 st.title("OIC Gen3 XSLT Generator")
