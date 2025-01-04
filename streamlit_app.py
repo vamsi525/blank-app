@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import json
-from openai import AzureOpenAI
+import openai
 
 
 # Streamlit UI
