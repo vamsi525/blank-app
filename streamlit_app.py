@@ -62,7 +62,7 @@ def generate_xslt(client, source_schema, target_schema):
         },
         {
             "role": "user",
-            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
+            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards"
         }
     ]
 
