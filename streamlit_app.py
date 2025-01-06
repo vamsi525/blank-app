@@ -73,7 +73,7 @@ def generate_xslt(client, source_schema, target_schema):
           #    "content": f"Could you please generate an XSLT mapping that transforms the following source XML schema to the target XML schema? The transformation should be compatible with Oracle Integration Cloud (OIC) Gen 3 standards:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
           # },
     ]
-
+    st.write(chat_prompt)
     response = client.chat.completions.create(
         model=deployment,
         messages=chat_prompt,
