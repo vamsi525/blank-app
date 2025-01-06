@@ -20,69 +20,8 @@ client = AzureOpenAI(
     api_version=os.getenv("AZURE_OPENAI_API_VERSION") 
 )
 
-# Helper functions
-def parse_json(file):
-    """Parse JSON content."""
-    try:
-        return json.load(file)
-    except json.JSONDecodeError:
-        st.error("Failed to parse JSON file.")
-        return None
-def parse_xml(file):
-    """Parse XML content into a dictionary."""
-    try:
-        tree = ET.parse(file)
-        root = tree.getroot()
-        return xml_to_dict(root)
-    except ET.ParseError:
-        print("Failed to parse XML file.")
-        return None
 
-def xml_to_dict(element):
-    """Convert an XML element into a dictionary."""
-    if len(element) == 0:  # No child elements
-        return element.text.strip() if element.text else None
-    else:
-        result = {}
-        for child in element:
-            child_dict = xml_to_dict(child)
-            # Handle duplicate tags by converting to a list
-            if child.tag in result:
-                if not isinstance(result[child.tag], list):
-                    result[child.tag] = [result[child.tag]]
-                result[child.tag].append(child_dict)
-            else:
-                result[child.tag] = child_dict
-        return result
-# def parse_xml(file):
-#     """Parse XML content into a dictionary."""
-#     try:
-#         tree = ET.parse(file)
-#         root = tree.getroot()
-#         return xml_to_dict(root)
-#     except ET.ParseError:
-#         st.error("Failed to parse XML file.")
-#         return None
-
-# def xml_to_dict(element):
-#     """Convert an XML element into a dictionary."""
-#     return {
-#         element.tag: (
-#             element.text if len(element) == 0 else {child.tag: xml_to_dict(child) for child in element}
-#         )
-#     }
-
-def process_file(file):
-    """Identify file type and process accordingly."""
-    if file.name.endswith(".json"):
-        return parse_json(file)
-    elif file.name.endswith(".xml"):
-        return parse_xml(file)
-    else:
-        st.error("Unsupported file format. Please upload JSON or XML files.")
-        return None
-
-def generate_xslt(client, source_schema, target_schema):
+def generate_xslt(client, source_xml, target_xml):
     """Generate XSLT code using OpenAI Azure Chat API."""
     chat_prompt = [
         {
@@ -91,16 +30,9 @@ def generate_xslt(client, source_schema, target_schema):
         },
         {
             "role": "user",
-            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards"
+            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource XML:\n{source_xml}\n\nTarget XML:\n{target_xml}\n\nXSLT:\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards\nThe XSLT should not use templates or variables, and should use namespace prefixes"
         },
-        {
-            "role": "user",
-            "content": f"Don't use template"
-        },
-        {
-            "role": "user",
-            "content": f"use namespace prefix"
-        },
+       
           # {
           #    "role": "user",
           #    "content": f"Could you please generate an XSLT mapping that transforms the following source XML schema to the target XML schema? The transformation should be compatible with Oracle Integration Cloud (OIC) Gen 3 standards:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
@@ -130,25 +62,22 @@ col1, col2 = st.columns(2)
 
 # File upload section with side-by-side buttons
 with col1:
-    source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
+    uploaded_source_file = st.file_uploader("Upload Source XML file", type="xml")
 
 with col2:
-    target_file = st.file_uploader("Upload Target Schema", type=["json", "xml"])
+    uploaded_target_file = st.file_uploader("Upload Target Xml file", type="xml")
 
-# # File Upload Section
-# source_file = st.file_uploader("Upload Source Schema", type=["json", "xml"])
-# target_file = st.file_uploader("Upload Target Schema", type=["json", "xml"])
+
 
 if source_file and target_file:
-    # Process uploaded files
-    source_schema = process_file(source_file)
-    target_schema = process_file(target_file)
+    source_xml_content = uploaded_source_file.read().decode("utf-8")
+    target_xml_content = uploaded_target_file.read().decode("utf-8")
 
-    if source_schema and target_schema:
+    if source_xml_content and target_xml_content:
         if st.button("Generate XSLT"):
             with st.spinner("Generating XSLT..."):
                 try:
-                    xslt_code = generate_xslt(client, source_schema, target_schema)
+                    xslt_code = generate_xslt(client, source_xml_content, target_xml_content)
                     st.success("XSLT generated successfully!")
                     st.code(xslt_code, language="xml")
 
