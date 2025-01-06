@@ -69,7 +69,7 @@ with col2:
 
 
 
-if source_file and target_file:
+if uploaded_source_file and uploaded_target_file:
     source_xml_content = uploaded_source_file.read().decode("utf-8")
     target_xml_content = uploaded_target_file.read().decode("utf-8")
 
