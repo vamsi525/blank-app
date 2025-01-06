@@ -30,7 +30,7 @@ def generate_xslt(client, source_xml, target_xml):
         },
         {
             "role": "user",
-            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource XML:\n{source_xml}\n\nTarget XML:\n{target_xml}\n\nXSLT:\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards\nThe XSLT should not use templates or variables, and should use namespace prefixes like 'src' for the source xml and 'tgt' for the target xml."
+            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource XML:\n{source_xml}\n\nTarget XML:\n{target_xml}\n\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards\nThe XSLT should not use templates or variables, and should use namespace prefixes like 'src' for the source xml and 'tgt' for the target xml."
         },
        
           # {
