@@ -28,7 +28,6 @@ def parse_json(file):
     except json.JSONDecodeError:
         st.error("Failed to parse JSON file.")
         return None
-
 def parse_xml(file):
     """Parse XML content into a dictionary."""
     try:
@@ -36,16 +35,42 @@ def parse_xml(file):
         root = tree.getroot()
         return xml_to_dict(root)
     except ET.ParseError:
-        st.error("Failed to parse XML file.")
+        print("Failed to parse XML file.")
         return None
 
 def xml_to_dict(element):
     """Convert an XML element into a dictionary."""
-    return {
-        element.tag: (
-            element.text if len(element) == 0 else {child.tag: xml_to_dict(child) for child in element}
-        )
-    }
+    if len(element) == 0:  # No child elements
+        return element.text.strip() if element.text else None
+    else:
+        result = {}
+        for child in element:
+            child_dict = xml_to_dict(child)
+            # Handle duplicate tags by converting to a list
+            if child.tag in result:
+                if not isinstance(result[child.tag], list):
+                    result[child.tag] = [result[child.tag]]
+                result[child.tag].append(child_dict)
+            else:
+                result[child.tag] = child_dict
+        return result
+# def parse_xml(file):
+#     """Parse XML content into a dictionary."""
+#     try:
+#         tree = ET.parse(file)
+#         root = tree.getroot()
+#         return xml_to_dict(root)
+#     except ET.ParseError:
+#         st.error("Failed to parse XML file.")
+#         return None
+
+# def xml_to_dict(element):
+#     """Convert an XML element into a dictionary."""
+#     return {
+#         element.tag: (
+#             element.text if len(element) == 0 else {child.tag: xml_to_dict(child) for child in element}
+#         )
+#     }
 
 def process_file(file):
     """Identify file type and process accordingly."""
