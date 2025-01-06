@@ -64,14 +64,14 @@ def generate_xslt(client, source_schema, target_schema):
             "role": "system",
             "content": "You are an AI assistant that generates XSLT mappings between source and target schemas for OIC Gen3 integrations."
         },
-        # {
-        #     "role": "user",
-        #     "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards"
-        # },
-          {
-             "role": "user",
-             "content": f"Could you please generate an XSLT mapping that transforms the following source XML schema to the target XML schema? The transformation should be compatible with Oracle Integration Cloud (OIC) Gen 3 standards:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
-          },
+        {
+            "role": "user",
+            "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards"
+        },
+          # {
+          #    "role": "user",
+          #    "content": f"Could you please generate an XSLT mapping that transforms the following source XML schema to the target XML schema? The transformation should be compatible with Oracle Integration Cloud (OIC) Gen 3 standards:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
+          # },
     ]
 
     response = client.chat.completions.create(
