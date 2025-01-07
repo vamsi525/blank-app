@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import streamlit as st
 from openai import AzureOpenAI
 from dotenv import load_dotenv
+import re
 
 # Load the environment variables from the .env file
 load_dotenv("./example.env")
