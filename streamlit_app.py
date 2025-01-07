@@ -49,10 +49,12 @@ def generate_xslt(client, source_xml, target_xml):
     #return response['choices'][0]['message']['content']
     return response.choices[0].message.content
     
-# Function to extract XSLT from the response
 def extract_xslt(response_text):
-    # Regex to match the XSLT block
-    xslt_pattern = r"(?s)<\?xml.*?</xsl:stylesheet>"
+    """
+    Extracts the XSLT code block from the OpenAI response.
+    """
+    # Regex to match everything between <xsl:stylesheet> and </xsl:stylesheet>
+    xslt_pattern = r"(?s)<xsl:stylesheet.*?</xsl:stylesheet>"
     match = re.search(xslt_pattern, response_text)
     if match:
         return match.group(0)
