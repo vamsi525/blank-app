@@ -31,12 +31,7 @@ def generate_xslt(client, source_xml, target_xml):
         {
             "role": "user",
             "content": f"Generate an XSLT that maps the following source schema to the target schema:\n\nSource XML:\n{source_xml}\n\nTarget XML:\n{target_xml}\n\nEnsure the XSLT is compatible with Oracle Integration Cloud (OIC) Gen 3 standards\nThe XSLT should not use templates or variables, and should use namespace prefixes like 'src' for the source xml and 'tgt' for the target xml."
-        },
-       
-          # {
-          #    "role": "user",
-          #    "content": f"Could you please generate an XSLT mapping that transforms the following source XML schema to the target XML schema? The transformation should be compatible with Oracle Integration Cloud (OIC) Gen 3 standards:\n\nSource Schema:\n{json.dumps(source_schema, indent=2)}\n\nTarget Schema:\n{json.dumps(target_schema, indent=2)}"
-          # },
+        }
     ]
     st.write(chat_prompt)
     response = client.chat.completions.create(
@@ -52,7 +47,16 @@ def generate_xslt(client, source_xml, target_xml):
     )
     #return response['choices'][0]['message']['content']
     return response.choices[0].message.content
-
+    
+# Function to extract XSLT from the response
+def extract_xslt(response_text):
+    # Regex to match the XSLT block
+    xslt_pattern = r"(?s)<\?xml.*?</xsl:stylesheet>"
+    match = re.search(xslt_pattern, response_text)
+    if match:
+        return match.group(0)
+    return None
+    
 # Streamlit App
 st.title("OIC Gen3 XSLT Generator")
 st.write("Upload source and target schema files (JSON, XML, or a combination) to generate XSLT mappings.")
@@ -77,9 +81,25 @@ if uploaded_source_file and uploaded_target_file:
         if st.button("Generate XSLT"):
             with st.spinner("Generating XSLT..."):
                 try:
-                    xslt_code = generate_xslt(client, source_xml_content, target_xml_content)
+                    xslt_code_response = generate_xslt(client, source_xml_content, target_xml_content)
                     st.success("XSLT generated successfully!")
-                    st.code(xslt_code, language="xml")
+                    #st.code(xslt_code, language="xml")
+                    # Extract XSLT
+                    xslt_code = extract_xslt(xslt_code_response)
+                    
+                    # Streamlit application
+                    st.title("OpenAI Response Parser")
+                    if xslt_code:
+                        st.subheader("Extracted XSLT")
+                        st.code(xslt_code, language="xml")  # Display the XSLT with syntax highlighting
+                    else:
+                        st.warning("No XSLT code found in the response.")
+                    
+                    # Display remaining message
+                    remaining_message = xslt_code_response.replace(xslt_code, "").strip()
+                    if remaining_message:
+                        st.subheader("Remaining Message")
+                        st.write(remaining_message)
 
                    
                 except Exception as e:
