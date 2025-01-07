@@ -84,7 +84,7 @@ if uploaded_source_file and uploaded_target_file:
         if st.button("Generate XSLT"):
             with st.spinner("Generating XSLT..."):
                 try:
-                    xslt_code_response = generate_xslt(client, source_xml_content, target_xml_content)
+                    xslt_code = generate_xslt(client, source_xml_content, target_xml_content)
                     st.success("XSLT generated successfully!")
                     st.code(xslt_code, language="xml")
                     # # Extract XSLT
