@@ -38,13 +38,14 @@ def generate_xslt(client, source_xml, target_xml):
     response = client.chat.completions.create(
         model=deployment,
         messages=chat_prompt,
-        max_tokens=1000,
-        temperature=0.7,
-        top_p=0.95,
+        max_tokens=1000,    # Tokens ->more tokens more cost and response length will depends on tokens
+        temperature=0.7,    # 0->Deterministic , 1-> Creative  # higher temparature - more random and creative res
+        top_p=0.95,         # 0-> Focused, 1-> Random    #use temperature or top_p not both #top_p probability maths
         frequency_penalty=0,
         presence_penalty=0,
         stop=None,
         stream=False,
+        #n=1  # number of responses
     )
     #return response['choices'][0]['message']['content']
     return response.choices[0].message.content
