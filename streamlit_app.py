@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import streamlit as st
 from openai import AzureOpenAI
 from dotenv import load_dotenv
-import re
+#import re
 
 # Load the environment variables from the .env file
 load_dotenv("./example.env")
@@ -49,16 +49,16 @@ def generate_xslt(client, source_xml, target_xml):
     #return response['choices'][0]['message']['content']
     return response.choices[0].message.content
     
-def extract_xslt(response_text):
-    """
-    Extracts the XSLT code block from the OpenAI response.
-    """
-    # Regex to match everything between <xsl:stylesheet> and </xsl:stylesheet>
-    xslt_pattern = r"(?s)<xsl:stylesheet.*?</xsl:stylesheet>"
-    match = re.search(xslt_pattern, response_text)
-    if match:
-        return match.group(0)
-    return None
+# def extract_xslt(response_text):
+#     """
+#     Extracts the XSLT code block from the OpenAI response.
+#     """
+#     # Regex to match everything between <xsl:stylesheet> and </xsl:stylesheet>
+#     xslt_pattern = r"(?s)<xsl:stylesheet.*?</xsl:stylesheet>"
+#     match = re.search(xslt_pattern, response_text)
+#     if match:
+#         return match.group(0)
+#     return None
     
 # Streamlit App
 st.title("OIC Gen3 XSLT Generator")
@@ -86,23 +86,23 @@ if uploaded_source_file and uploaded_target_file:
                 try:
                     xslt_code_response = generate_xslt(client, source_xml_content, target_xml_content)
                     st.success("XSLT generated successfully!")
-                    #st.code(xslt_code, language="xml")
-                    # Extract XSLT
-                    xslt_code = extract_xslt(xslt_code_response)
+                    st.code(xslt_code, language="xml")
+                    # # Extract XSLT
+                    # xslt_code = extract_xslt(xslt_code_response)
                     
-                    # Streamlit application
-                    st.title("OpenAI Response Parser")
-                    if xslt_code:
-                        st.subheader("Extracted XSLT")
-                        st.code(xslt_code, language="xml")  # Display the XSLT with syntax highlighting
-                    else:
-                        st.warning("No XSLT code found in the response.")
+                    # # Streamlit application
+                    # st.title("OpenAI Response Parser")
+                    # if xslt_code:
+                    #     st.subheader("Extracted XSLT")
+                    #     st.code(xslt_code, language="xml")  # Display the XSLT with syntax highlighting
+                    # else:
+                    #     st.warning("No XSLT code found in the response.")
                     
-                    # Display remaining message
-                    remaining_message = xslt_code_response.replace(xslt_code, "").strip()
-                    if remaining_message:
-                        st.subheader("Remaining Message")
-                        st.write(remaining_message)
+                    # # Display remaining message
+                    # remaining_message = xslt_code_response.replace(xslt_code, "").strip()
+                    # if remaining_message:
+                    #     st.subheader("Remaining Message")
+                    #     st.write(remaining_message)
 
                    
                 except Exception as e:
